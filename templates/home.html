@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% block content %}
+    <div class="container mt-5">
+        <div class="row">
+            {% for product in products  %}
+            <div class="col-2">
+                <div class="card"  title="{{ product.name }}">
+                    <img src="{{ product.image.url }}" class="w-100" style="height:200px;object-fit:cover" alt="">
+                    <div class="card-body">
+                        <h2 class="h6 text-truncate">{{ product.name }}</h2>
+                        {% if product.discount_price  %}
+                            <h5 class="h6">Rs. {{ product.discount_price }}/-<del>{{product.price}}</del></h5>
+                        {% else %}
+                            <h5 class="h6">Rs. {{product.price}}</h5>
+                        {% endif %}
+                        <a href="" class="btn btn-success">Buy</a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+               <div class="d-flex">
+                    <img src="{% static 'sad.gif' %}" width="3%"/> 
+               </div>
+               <h2 style="color:#ddd">Not Found Any Product</h2>
+               <p style="color:grey">Please try to search or find with other keyword or category</p>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock content %}
