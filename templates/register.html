@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-4 mx-auto">
+                <div class="card">
+                    <div class="card-body">
+                        <h2>Create an Account</h2>
+                        <form action="{% url 'register' %}" method="post" class="d-flex flex-column">
+                            {% csrf_token %}
+                            {{ form }}
+                            <input type="submit" class="btn btn-success w-100 mt-3">
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

@@ -11,17 +11,21 @@
     
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
-            <a href="" class="navbar-brand">Eshop</a>
+            <a href="{% url 'homepage' %}" class="navbar-brand">Eshop</a>
 
-            <form action="" class="mx-auto d-flex">
-                <input type="text" class="form-control" size="70">
+            <form action="{% url 'search' %}" class="mx-auto d-flex">
+                <input type="text" class="form-control" size="70" name="search" placeholder="e.g 'Clinic Plus','Shoes' etc">
                 <input type="submit" value="Go" class="btn btn-danger">
             </form>
 
             <ul class="navbar-nav">
-                <li class="nav-item"><a href="" class="nav-link">Home</a></li>
-                <li class="nav-item"><a href="" class="nav-link">Register</a></li>
-                <li class="nav-item"><a href="" class="nav-link">Login</a></li>
+                <li class="nav-item"><a href="{% url 'homepage' %}" class="nav-link">Home</a></li>
+               {% if user.is_authenticated %}
+                 <li class="nav-item"><a href="{% url 'logout'%}" class="nav-link">Logout</a></li>
+               {% else %}
+                <li class="nav-item"><a href="{% url 'register'%}" class="nav-link">Register</a></li>
+                <li class="nav-item"><a href="{% url 'login'%}" class="nav-link">Login</a></li>
+               {% endif %}
                 <li class="nav-item"><a href="" class="nav-link">Cart</a></li>
             </ul>
         </div>

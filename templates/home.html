@@ -15,7 +15,7 @@
                         {% else %}
                             <h5 class="h6">Rs. {{product.price}}</h5>
                         {% endif %}
-                        <a href="" class="btn btn-success">Buy</a>
+                        <a href="{% url 'viewProduct' product.slug %}" class="btn btn-success mt-2">Buy Now</a>
                     </div>
                 </div>
             </div>

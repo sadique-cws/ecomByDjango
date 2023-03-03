@@ -10,6 +10,11 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('',homepage,name="homepage"),
     path("category/<slug>/", filterProduct, name="filter"),
+    path('search/', search, name="search"),
+    path("product/<slug>/",viewProduct, name="viewProduct"),
+    path('login/',login,name="login"),
+    path('register/',register,name="register"),
+    path("signout/",signout,name="logout"),
 ]
 
 

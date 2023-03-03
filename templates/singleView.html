@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+    <div class="container mt-4">
+        <div class="col-12">
+            <div class="row mb-4">
+                <div class="col-4">
+                    <img src="{{ product.image.url }}" class="w-100 shadow" alt="">
+                </div>
+                <div class="col-8">
+                    <table class="table">
+                        <tr>
+                            <th>Name</th>
+                            <td>{{ product.name }}</td>
+                        </tr>
+                        <tr>
+                            <th>category</th>
+                            <td>{{ product.category }}</td>
+                        </tr>
+                        <tr>
+                            <th>Brand</th>
+                            <td>{{ product.brand }}</td>
+                        </tr>
+                    </table>
+
+                    {% if product.discount_price %}
+                        <h1>₹{{ product.discount_price }} <del class="h4 text-muted">₹{{ product.price }}</del></h1>
+                    {% else %}
+                        <h1>₹{{ product.price }}</h1>
+                    {% endif %}
+
+                    <div class="d-flex gap-2">
+                        <a href="" class="btn btn-success btn-lg">Add to Cart</a>
+                        <a href="" class="btn btn-warning btn-lg">Buy Now</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="card border border-secondary p-0">
+                    <div class="card-header bg-secondary text-white">Description</div>
+                    <div class="card-body">
+                        <p>{{ product.description }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock  %}

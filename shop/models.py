@@ -1,7 +1,5 @@
 from django.db import models
-
-# Create your models here.
-
+from django.conf import settings
 
 class Category(models.Model):
     title = models.CharField(max_length=200)
@@ -10,8 +8,6 @@ class Category(models.Model):
 
     def __str__(self):
         return self.title
-
-    
 
 class Product(models.Model):
     name = models.CharField(max_length=200)
@@ -25,4 +21,9 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+    
+class OrderItem(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE)
+    ordered = models.BooleanField(default=False)
+    item = models.ForeignKey(Product,on_delete=models.CASCADE)
     
