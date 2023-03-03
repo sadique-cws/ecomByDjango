@@ -1,8 +1,9 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,get_object_or_404
 from shop.models import *
 from django.contrib.auth.forms import AuthenticationForm
 from  django.contrib.auth import authenticate, login as loginFun, logout
 from shop.forms import RegisterForm
+from django.contrib.auth.decorators import login_required
 
 def getCategory():
     return Category.objects.all()
@@ -56,8 +57,30 @@ def register(r):
     data['form'] = form
     return render(r, "register.html",data)
 
-
-
 def signout(r):
     logout(r)
     return redirect(login)
+
+# login required
+@login_required()
+def addToCart(r,slug):
+    product = get_object_or_404(Product, slug=slug)
+    order_item, created = OrderItem.objects.get_or_create(user=r.user, ordered=False, item=product)
+    order_qs = Order.objects.filter(user=r.user,ordered=False)
+
+    if order_qs.exists():
+        order = order_qs[0]
+        #order record already exist
+        if(order.items.filter(item__slug=slug).exists()):
+            order_item.qty += 1
+            order_item.save()
+        else:
+            order.items.add(order_item)
+        
+        return redirect(homepage)
+    else:
+        #need to create new order record
+        order = Order.objects.create(user=r.user)
+        order.items.add(order_item)
+        # msg: this item is added to your cart
+        return redirect(homepage)
