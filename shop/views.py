@@ -46,6 +46,7 @@ def login(r):
     data['form'] = form
     return render(r, "login.html", data)
 
+
 def register(r):
     form = RegisterForm(r.POST or None)
     if r.method == "POST":
@@ -77,10 +78,65 @@ def addToCart(r,slug):
         else:
             order.items.add(order_item)
         
-        return redirect(homepage)
+        return redirect(myCart)
     else:
         #need to create new order record
         order = Order.objects.create(user=r.user)
         order.items.add(order_item)
         # msg: this item is added to your cart
-        return redirect(homepage)
+        return redirect(myCart)
+    
+@login_required()
+def myCart(r):
+    data = {}
+    data['order'] = Order.objects.get(user=r.user,ordered=False)
+    return render(r, "cart.html",data)
+
+
+@login_required()
+def removeFromCart(r,slug):
+    product = get_object_or_404(Product, slug=slug)
+    order = Order.objects.get(user=r.user,ordered=False)
+    order_item = OrderItem.objects.get(user=r.user, ordered=False, item=product)
+    if order:
+        if(order.items.filter(item__slug=slug).exists()):
+            if order_item.qty <= 1:
+                order_item.delete()
+            else:
+                order_item.qty -= 1
+                order_item.save()
+        return redirect(myCart)
+
+
+
+def checkCode(code):
+    try:
+        coupon = Coupon.objects.get(code=code)
+        return True
+    except:
+        return False
+    
+def getCoupon(code):
+    try:
+        coupon = Coupon.objects.get(code=code)
+        return coupon 
+    except:
+        # invalid coupon
+        return redirect(myCart)
+
+def addCoupon(r):
+    code = r.POST.get('code')
+
+    if checkCode(code):
+        coupon = getCoupon(code)
+        order = Order.objects.get(user=r.user, ordered=False)
+        order.coupon = coupon
+        order.save()
+        # successfully coupon applied
+    return redirect(myCart)
+
+def removeCoupon(r):
+    order = Order.objects.get(user=r.user, ordered=False)
+    order.coupon = None
+    order.save()
+    return redirect(myCart)
