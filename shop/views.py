@@ -4,6 +4,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from  django.contrib.auth import authenticate, login as loginFun, logout
 from shop.forms import RegisterForm
 from django.contrib.auth.decorators import login_required
+from .forms import AddressForm
 
 def getCategory():
     return Category.objects.all()
@@ -46,7 +47,6 @@ def login(r):
     data['form'] = form
     return render(r, "login.html", data)
 
-
 def register(r):
     form = RegisterForm(r.POST or None)
     if r.method == "POST":
@@ -61,7 +61,6 @@ def register(r):
 def signout(r):
     logout(r)
     return redirect(login)
-
 # login required
 @login_required()
 def addToCart(r,slug):
@@ -92,7 +91,6 @@ def myCart(r):
     data['order'] = Order.objects.get(user=r.user,ordered=False)
     return render(r, "cart.html",data)
 
-
 @login_required()
 def removeFromCart(r,slug):
     product = get_object_or_404(Product, slug=slug)
@@ -106,8 +104,6 @@ def removeFromCart(r,slug):
                 order_item.qty -= 1
                 order_item.save()
         return redirect(myCart)
-
-
 
 def checkCode(code):
     try:
@@ -140,3 +136,14 @@ def removeCoupon(r):
     order.coupon = None
     order.save()
     return redirect(myCart)
+
+def checkout(r):
+    form  = AddressForm(r.POST or None)
+    if r.method == "POST":
+        if form.is_valid():
+            f = form.save(commit=False)
+            f.user = r.user
+            f.save()
+            return redirect(checkout)
+        
+    return render(r, "checkout.html",{"form":form})

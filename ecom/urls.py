@@ -20,6 +20,7 @@ urlpatterns = [
     path("cart/",myCart,name="cart"),
     path("add-coupon/",addCoupon,name="addCoupon"),
     path("remove-coupon/",removeCoupon,name="removeCoupon"),
+    path("checkout/",checkout,name="checkout"),
 ]
 
 

@@ -54,6 +54,7 @@ class Order(models.Model):
     ordered_date = models.DateTimeField(blank=True,null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     coupon = models.ForeignKey('Coupon',on_delete=models.CASCADE,null=True, blank=True)
+    address = models.ForeignKey("Address",on_delete=models.CASCADE, null=True, blank=True)
     # address, payments details add further
 
     def __str__(self):
@@ -91,3 +92,21 @@ class Coupon(models.Model):
     def __str__(self):
         return self.code
     
+
+class Address(models.Model):
+    name = models.CharField(max_length=200, null=True, blank=True)
+    alt_contact = models.CharField(max_length=200, null=True, blank=True)
+    street = models.CharField(max_length=200)
+    landmark = models.CharField(max_length=200)
+    city = models.CharField(max_length=200)
+    state = models.CharField(max_length=200)
+    pincode = models.IntegerField()
+    type = models.CharField(max_length=20,choices=(("Home","Home"),("Office","Office")))
+    isDefault = models.BooleanField(default=False)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE)
+
+    def __str__(self):
+        if self.name:
+            return self.name
+        else:
+            return self.user.username
