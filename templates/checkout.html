@@ -5,18 +5,44 @@
 {% block content %}
 
     <div class="container mt-5">
-        <div class="col-12">
-            <h2>Checkout your Order </h2>
-        </div>
-        <div class="col-9">
-            <div class="card">
-                <div class="card-header">Enter Address Details</div>
-                <div class="card-body">
-                    <form action="" method="post">
+        <div class="row">
+            <div class="col-9">
+                <h2>Checkout your Order </h2>
+                <div class="card">
+                    <div class="card-header">Enter Address Details</div>
+                    <div class="card-body">
+                        <form action="" method="post">
+                            {% csrf_token %}
+                            {{ form|crispy }}
+                            
+                            <input type="submit" class="btn btn-success">
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3">
+                <h2>Saved Addresss</h2>
+                <div class="d-flex flex-column gap-2">
+                    <form action="{% url 'checkoutWithSaveAddress' %}" method="post">
                         {% csrf_token %}
-                        {{ form|crispy }}
-                        
-                        <input type="submit" class="btn btn-success">
+                        {% for address in addresses  %}
+                            <div class="card w-100 mb-3">
+                                <label>
+                                <input onChange="this.form.submit()" type="radio" name="saved_address" value="{{ address.id }}" class="card_radio">
+                                <div class="card-body radio_body">
+                                    <h4 class="h6">{{address.name}}</h4>
+                                    <span>(+91) {{address.alt_contact}}</span>
+                                    <p>{{ address.street }}, {{ address.landmark }}, {{address.city}} ({{ address.state }}) - {{ address.pincode }}</p>
+                                    <div class="d-flex justify-content-between">
+                                        <span class="badge bg-danger">{{ address.get_type_display }}</span>
+                                        {% if address.isDefault %}
+                                            <span class="badge bg-success rounded-0">Default</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </label>
+                            </div>
+                        {% endfor %}
                     </form>
                 </div>
             </div>

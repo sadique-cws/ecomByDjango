@@ -139,11 +139,27 @@ def removeCoupon(r):
 
 def checkout(r):
     form  = AddressForm(r.POST or None)
+    addresses = Address.objects.filter(user=r.user)
     if r.method == "POST":
         if form.is_valid():
             f = form.save(commit=False)
             f.user = r.user
             f.save()
+
+            order = Order.objects.get(user=r.user, ordered=False)
+            order.address = f
+            order.save()
+
             return redirect(checkout)
         
-    return render(r, "checkout.html",{"form":form})
+    return render(r, "checkout.html",{"form":form, "addresses":addresses})
+
+
+def checkoutWithSaveAddress(r):
+    if r.method == "POST":
+        address_id = r.POST.get('saved_address')
+        address = Address.objects.get(pk=address_id)
+        order = Order.objects.get(user=r.user, ordered=False)
+        order.address = address
+        order.save()
+        return redirect(checkout)

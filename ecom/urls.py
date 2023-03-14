@@ -21,7 +21,8 @@ urlpatterns = [
     path("add-coupon/",addCoupon,name="addCoupon"),
     path("remove-coupon/",removeCoupon,name="removeCoupon"),
     path("checkout/",checkout,name="checkout"),
-]
+    path("checkout-with-save/",checkoutWithSaveAddress,name="checkoutWithSaveAddress"),
+] 
 
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
