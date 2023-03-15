@@ -22,6 +22,8 @@ urlpatterns = [
     path("remove-coupon/",removeCoupon,name="removeCoupon"),
     path("checkout/",checkout,name="checkout"),
     path("checkout-with-save/",checkoutWithSaveAddress,name="checkoutWithSaveAddress"),
+    path('payment/', payment),
+    path('response/', response),
 ] 
 
 

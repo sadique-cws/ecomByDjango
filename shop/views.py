@@ -6,6 +6,13 @@ from shop.forms import RegisterForm
 from django.contrib.auth.decorators import login_required
 from .forms import AddressForm
 
+# new imports 
+from django.views.decorators.csrf import csrf_exempt
+from shop.utils import VerifyPaytmResponse
+from . import Checksum
+from django.conf import settings
+from django.http import HttpResponse
+
 def getCategory():
     return Category.objects.all()
 
@@ -150,7 +157,7 @@ def checkout(r):
             order.address = f
             order.save()
 
-            return redirect(checkout)
+            return HttpResponse("<html><a href='http://localhost:8000/payment'>PayNow</html>")
         
     return render(r, "checkout.html",{"form":form, "addresses":addresses})
 
@@ -162,4 +169,44 @@ def checkoutWithSaveAddress(r):
         order = Order.objects.get(user=r.user, ordered=False)
         order.address = address
         order.save()
-        return redirect(checkout)
+        return HttpResponse("<html><a href='http://localhost:8000/payment'>PayNow</html>")
+
+
+def payment(request):
+    order_id = Checksum.__id_generator__()
+    bill_amount = "5"
+    data_dict = {
+        'MID': settings.PAYTM_MERCHANT_ID,
+        'INDUSTRY_TYPE_ID': settings.PAYTM_INDUSTRY_TYPE_ID,
+        'WEBSITE': settings.PAYTM_WEBSITE,
+        'CHANNEL_ID': settings.PAYTM_CHANNEL_ID,
+        'CALLBACK_URL': settings.PAYTM_CALLBACK_URL,
+        'MOBILE_NO': '7405505665',
+        'EMAIL': 'dhaval.savalia6@gmail.com',
+        'CUST_ID': str(request.user.id),
+        'ORDER_ID':order_id,
+        'TXN_AMOUNT': bill_amount,
+    } # This data should ideally come from database
+    data_dict['CHECKSUMHASH'] = Checksum.generate_checksum(data_dict, settings.PAYTM_MERCHANT_KEY)
+    context = {
+        'payment_url': settings.PAYTM_PAYMENT_GATEWAY_URL,
+        'comany_name': settings.PAYTM_COMPANY_NAME,
+        'data_dict': data_dict
+    }
+    return render(request, 'paytm-django-view.html', context)
+
+
+@csrf_exempt
+def response(request):
+    resp = VerifyPaytmResponse(request)
+    if resp['verified']:
+        # save success details to db; details in resp['paytm']
+        print(resp)
+        order = Order.objects.get(user=resp['paytm']['CUST_ID'],ordered=False)
+        order.ordered = True
+        order.save()
+
+        return HttpResponse("<center><h1>Transaction Successful</h1><center>", status=200)
+    else:
+        # check what happened; details in resp['paytm']
+        return HttpResponse("<center><h1>Transaction Failed</h1><center>", status=400)

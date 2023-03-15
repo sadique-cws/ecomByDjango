@@ -132,3 +132,16 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_URL  = "media/"
 MEDIA_ROOT = BASE_DIR / "media"
+
+
+# paytm gateway details 
+
+PAYTM_COMPANY_NAME = "Ecom"   # For representation purposes 
+PAYTM_INDUSTRY_TYPE_ID = "PROD"     # For staging environment
+PAYTM_CHANNEL_ID = "WEB"
+PAYTM_MERCHANT_KEY = "H1J3@E1#NsG!vsSy"
+PAYTM_MERCHANT_ID = "Orbmou57491502380880"
+PAYTM_CALLBACK_URL = "http://localhost:8000/response/" # Hardcode
+PAYTM_WEBSITE = "DEFAULT"
+PAYTM_PAYMENT_GATEWAY_URL = "https://securegw.paytm.in/order/process"
+PAYTM_TRANSACTION_STATUS_URL = "https://securegw.paytm.in/order/status"
