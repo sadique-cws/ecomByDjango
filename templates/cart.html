@@ -6,9 +6,10 @@
         <div class="row">
             <h2 class="h2">My Cart (3)</h2>
         </div>
+        {% if order %}
         <div class="row">
             <div class="col-9">
-                {% for order_item in order.items.all %}
+                {% for order_item in order.0.items.all %}
                 <div class="card mb-3 p-2">
                     <div class="row">
                         <div class="col-1">
@@ -43,25 +44,25 @@
                 <table class="table table-bordered">
                     <tr>
                         <th>Total Amount</th>
-                        <td>₹{{ order.get_total_amount }}</td>
+                        <td>₹{{ order.0.get_total_amount }}</td>
                     </tr>
                     <tr>
                         <th>total Tax (18% GST)</th>
-                        <td>₹{{ order.get_tax_amount }}</td>
+                        <td>₹{{ order.0.get_tax_amount }}</td>
                     </tr>
                     <tr class="bg-success text-white">
                         <th>total Discount</th>
-                        <td>₹{{ order.get_discount_amount }}</td>
+                        <td>₹{{ order.0.get_discount_amount }}</td>
                     </tr>
 
-                    {% if order.coupon%}
+                    {% if order.0.coupon%}
                     <tr class="bg-warning text-black">
                         <th>Coupon Discount
                             <div class="d-flex mt-2 gap-2">
-                                Code: {{ order.coupon.code }} <a href="{% url 'removeCoupon' %}" class="text-danger small">remove</a>
+                                Code: {{ order.0.coupon.code }} <a href="{% url 'removeCoupon' %}" class="text-danger small">remove</a>
                             </div>
                         </th>
-                        <td>₹{{ order.coupon.amount }}
+                        <td>₹{{ order.0.coupon.amount }}
 
                            
                         </td>
@@ -70,11 +71,11 @@
 
                     <tr>
                         <th>Total Payable Amount</th>
-                        <td class="h4">₹{{ order.get_payable_amount }}</td>
+                        <td class="h4">₹{{ order.0.get_payable_amount }}</td>
                     </tr>
                 </table>
 
-                {% if not order.coupon %}
+                {% if not order.0.coupon %}
                 <div class="d-flex mt-5 bg-warning p-2 justify-content-center">
                     <form action="{% url 'addCoupon' %}" method="post" class="d-flex">
                         {% csrf_token %}
@@ -90,6 +91,13 @@
                 </div>
             </div>
         </div>
+        {% else%}
+            <div class="row">
+                <div class="col-12">
+                    <h1 class="display-1" style="font-weight:bolder;color:lightgray">Empty Cart</h1>
+                </div>
+            </div>
+        {% endif %}
     </div>
 
 

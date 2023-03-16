@@ -19,7 +19,6 @@ def VerifyPaytmResponse(response):
             }
             data = '{"MID":"%s","ORDERID":"%s"}'%(MID, ORDERID)
             check_resp = requests.post(STATUS_URL, data=data, headers=headers).json()
-            print("data : = ",data_dict)
             if check_resp['STATUS']=='TXN_SUCCESS':
                 response_dict['verified'] = True
                 response_dict['paytm'] = check_resp

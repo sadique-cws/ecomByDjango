@@ -18,6 +18,7 @@ urlpatterns = [
     path("add-to-cart/<slug>/",addToCart, name="addCart"),
     path("remove-from-cart/<slug>/",removeFromCart, name="removeCart"),
     path("cart/",myCart,name="cart"),
+    path("my-order/",myOrder,name="myOrder"),
     path("add-coupon/",addCoupon,name="addCoupon"),
     path("remove-coupon/",removeCoupon,name="removeCoupon"),
     path("checkout/",checkout,name="checkout"),

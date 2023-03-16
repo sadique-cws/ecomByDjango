@@ -24,7 +24,7 @@ class Product(models.Model):
     
     def getSavingPercent(self):
         result = ((self.price - self.discount_price) / self.price) * 100
-        return round(result)
+        return f" %.2f "% result
     
 class OrderItem(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE)
@@ -55,6 +55,7 @@ class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     coupon = models.ForeignKey('Coupon',on_delete=models.CASCADE,null=True, blank=True)
     address = models.ForeignKey("Address",on_delete=models.CASCADE, null=True, blank=True)
+    order_id = models.CharField(max_length=200,blank=True, null=True)
     # address, payments details add further
 
     def __str__(self):
@@ -110,3 +111,27 @@ class Address(models.Model):
             return self.name
         else:
             return self.user.username
+        
+
+#{'TXNID': '20230316010420000843057080877125427', 'BANKTXNID': '307536743959', 'ORDERID': 'WVsF4g', 'TXNAMOUNT': '5.00', 'STATUS': 'TXN_SUCCESS', 'TXNTYPE': 'SALE', 'GATEWAYNAME': 'PPBL', 'RESPCODE': '01', 'RESPMSG': 'Txn Success', 'MID': 'Orbmou57491502380880', 'PAYMENTMODE': 'UPI', 'REFUNDAMT': '0.0', 'TXNDATE': '2023-03-16 09:27:51.0'}
+class Payment(models.Model):
+    TXNID = models.CharField(max_length=200)
+    BANKTXNID = models.BigIntegerField()
+    ORDERID = models.CharField(max_length=20, unique=True)
+    TXNAMOUNT = models.FloatField()
+    STATUS = models.CharField(max_length=50)
+    TXNTYPE = models.CharField(max_length=20)
+    PAYMENTMODE = models.CharField(max_length=200)
+    REFUNDAMT = models.FloatField()
+    TXNDATE = models.DateTimeField()
+
+    def __str__(self):
+        return self.ORDERID
+
+
+
+
+
+
+
+
