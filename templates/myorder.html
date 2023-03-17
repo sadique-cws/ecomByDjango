@@ -2,67 +2,78 @@
 
 {% block content %}
 
-    <div class="container mt-5">
-        <div class="row">
-            <h2 class="h2">My Order</h2>
-        </div>
-        {% if orders %}
-        <div class="row">
-            <div class="col-9">
-              {% for order in orders %}
-              <div class="card mb-3">
-                <div class="card-header">
-                    <div class="d-flex justify-content-between">
+<div class="container mt-5">
+    <div class="row">
+        <h2 class="h2">My Order</h2>
+    </div>
+    {% if orders %}
+    <div class="row">
+        <div class="col-9">
+            {% for order in orders %}
+            <div class="card mb-3">
+                <div class="card-header p-1" style="">
+                    <div class="d-flex justify-content-between align-items-center small">
                         <div class="float-start">
-                            <h2 class="h6">Order id: {{ order.order_id }}</h2>
+                            <h2 class="small m-0">Order id: {{ order.order_id }}</h2>
                         </div>
                         <div class="float-end">
-                            <h6>Order Date: {{ order.ordered_date }}</h6>
+                            <h6 class="small m-0 text-muted">Order Date: {{ order.payment_id.TXNDATE }}</h6>
                         </div>
                     </div>
                 </div>
-                <div class="card-body">
+                <div class="card-body p-1">
                     {% for order_item in order.items.all %}
-            <div class="card border-0 p-2">
-                <div class="row">
-                    <div class="col-1">
-                        <img src="{{ order_item.item.image.url }}" class="w-100" style="height:70px;object-fit: contain;" alt="">
+                    <div class="card border-0 p-2">
+                        <div class="row">
+                            <div class="col-1">
+                                <img src="{{ order_item.item.image.url }}" class="w-100"
+                                    style="height:70px;object-fit: contain;" alt="">
+                            </div>
+                            <div class="col-10">
+                                <h2 class="small mb-0">{{ order_item.item.name }}</h2>
+                                <div class="d-flex">
+                                    <p class="text small mb-0 text-muted">Category: {{ order_item.item.category.title }}
+                                    </p>
+                                </div>
+                                <div class="d-flex align-items-baseline gap-1">
+                                    {% if order_item.item.discount_price %}
+                                    <h4 class="small m-0">₹{{ order_item.get_discount_price }}</h4>
+                                    <div class="d-flex gap-0 align-items-baseline">
+                                        <span class="small text-muted"><span class="fw-bold bg-light">qty:</span> {{ order_item.qty }}</span>
+                                    </div>
+                                    <span class="text-success fw-bold" style="font-size:12px">Saving: {{ order_item.item.getSavingPercent}}%</span>
+                                    {% else %}
+                                    <h4>₹{{ order_item.get_price }}</h4>
+                                    <div class="d-flex gap-0 align-items-baseline">
+                                        <span class="small text-muted"><span class="fw-bold bg-light">qty:</span> {{ order_item.qty }}</span>
+                                    </div>
+                                    {% endif %}
+                                   </div>
+                               
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-10">
-                        <h2 class="h6 mb-0">{{ order_item.item.name }}</h2>
-                        <div class="d-flex">
-                            <p class="text small mb-2 text-muted">Category: {{ order_item.item.category.title }}</p>
-                        </div>
-                        <div class="d-flex align-items-baseline gap-2">
-                            {% if order_item.item.discount_price %}
-                                <h4>₹{{ order_item.get_discount_price }}</h4>
-                                <span class="text-success fw-bold">Saving: {{ order_item.item.getSavingPercent }}%</span>
-                            {% else %}
-                                <h4>₹{{ order_item.get_price }}</h4>
-                            {% endif %}
-                        </div>
-                        <div class="d-flex gap-1 align-items-baseline">
-                            <span class="h6">Qty: {{ order_item.qty }}</span>
-                        </div>
+                    {% endfor %}
+                </div>
+                <div class="card-footer p-1">
+                    <div class="d-flex">
+                        <span class="text-danger fw-bold small">Total Amount ₹{{ order.payment_id.TXNAMOUNT }}</span>
                     </div>
                 </div>
             </div>
             {% endfor %}
-                </div>
-            </div>
-              {% endfor %}
-            </div>
-          
         </div>
-        {% else%}
-            <div class="row">
-                <div class="col-12">
-                    <h1 class="display-1" style="font-weight:bolder;color:lightgray">Empty Order</h1>
-                    <a href="{% url 'homepage' %}" class="btn btn-success">Buy your first Product </a>
-                </div>
-            </div>
-        {% endif %}
+
     </div>
+    {% else%}
+    <div class="row">
+        <div class="col-12">
+            <h1 class="display-1" style="font-weight:bolder;color:lightgray">Empty Order</h1>
+            <a href="{% url 'homepage' %}" class="btn btn-success">Buy your first Product </a>
+        </div>
+    </div>
+    {% endif %}
+</div>
 
 
 {% endblock content %}

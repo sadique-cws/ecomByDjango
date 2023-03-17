@@ -4,11 +4,16 @@
 
     <div class="container mt-5">
         <div class="row">
-            <h2 class="h2">My Cart (3)</h2>
+            <h2 class="h2">My Cart
+                {% if order.0.items.count %}
+                    ({{ order.0.items.count }})
+                {% endif %}
+        </h2>
         </div>
         {% if order %}
         <div class="row">
             <div class="col-9">
+                {% include 'msg.html' %}
                 {% for order_item in order.0.items.all %}
                 <div class="card mb-3 p-2">
                     <div class="row">

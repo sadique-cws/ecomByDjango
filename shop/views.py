@@ -5,7 +5,7 @@ from  django.contrib.auth import authenticate, login as loginFun, logout
 from shop.forms import RegisterForm
 from django.contrib.auth.decorators import login_required
 from .forms import AddressForm
-
+from django.contrib import messages
 # new imports 
 from django.views.decorators.csrf import csrf_exempt
 from shop.utils import VerifyPaytmResponse
@@ -83,13 +83,14 @@ def addToCart(r,slug):
             order_item.save()
         else:
             order.items.add(order_item)
-        
+        messages.success(r,"This product is added in a cart successfully")
         return redirect(myCart)
     else:
         #need to create new order record
         order = Order.objects.create(user=r.user)
         order.items.add(order_item)
         # msg: this item is added to your cart
+        messages.success(r,"This product is added in a cart successfully")
         return redirect(myCart)
     
 @login_required()
@@ -113,6 +114,8 @@ def removeFromCart(r,slug):
         if(order.items.filter(item__slug=slug).exists()):
             if order_item.qty <= 1:
                 order_item.delete()
+                messages.error(r,"This product is remove in a cart successfully")
+
             else:
                 order_item.qty -= 1
                 order_item.save()
@@ -139,8 +142,9 @@ def addCoupon(r):
     if checkCode(code):
         coupon = getCoupon(code)
         order = Order.objects.get(user=r.user, ordered=False)
-        order.coupon = coupon
-        order.save()
+        if order.get_payable_amount() > coupon.amount:
+            order.coupon = coupon
+            order.save()
         # successfully coupon applied
     return redirect(myCart)
 
@@ -162,8 +166,7 @@ def checkout(r):
             order = Order.objects.get(user=r.user, ordered=False)
             order.address = f
             order.save()
-
-            return HttpResponse("<html><a href='http://localhost:8000/payment'>PayNow</html>")
+            return redirect("paynow")
         
     return render(r, "checkout.html",{"form":form, "addresses":addresses})
 
@@ -175,7 +178,7 @@ def checkoutWithSaveAddress(r):
         order = Order.objects.get(user=r.user, ordered=False)
         order.address = address
         order.save()
-        return HttpResponse("<html><a href='http://localhost:8000/payment'>PayNow</html>")
+        return redirect("paynow")
 
 
 def payment(request):
@@ -214,7 +217,6 @@ def response(request):
     resp = VerifyPaytmResponse(request)
     if resp['verified']:
         # save success details to db; details in resp['paytm']
-        print(resp['paytm'])
         pay = Payment()
         pay.TXNID = resp['paytm']['TXNID']
         pay.BANKTXNID = resp['paytm']['BANKTXNID']
@@ -228,6 +230,8 @@ def response(request):
         pay.save()
         order = Order.objects.get(order_id=resp['paytm']['ORDERID'],ordered=False)
         order.ordered = True
+        # this line assign payment record to order model
+        order.payment_id = pay
         order.save()
 
         return redirect(myCart)

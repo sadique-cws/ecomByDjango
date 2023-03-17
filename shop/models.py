@@ -56,6 +56,7 @@ class Order(models.Model):
     coupon = models.ForeignKey('Coupon',on_delete=models.CASCADE,null=True, blank=True)
     address = models.ForeignKey("Address",on_delete=models.CASCADE, null=True, blank=True)
     order_id = models.CharField(max_length=200,blank=True, null=True)
+    payment_id = models.OneToOneField("Payment",on_delete=models.CASCADE, blank=True, null=True)
     # address, payments details add further
 
     def __str__(self):
@@ -77,7 +78,7 @@ class Order(models.Model):
         return total
 
     def get_tax_amount(self):
-        return int(self.get_total_amount() * 0.18)
+        return (self.get_total_amount() * 0.18)
     
     def get_payable_amount(self):
         return self.get_total_amount() + self.get_tax_amount()

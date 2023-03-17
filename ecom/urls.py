@@ -12,9 +12,9 @@ urlpatterns = [
     path("category/<slug>/", filterProduct, name="filter"),
     path('search/', search, name="search"),
     path("product/<slug>/",viewProduct, name="viewProduct"),
-    path('login/',login,name="login"),
-    path('register/',register,name="register"),
-    path("signout/",signout,name="logout"),
+    path('accounts/login/',login,name="login"),
+    path('accounts/register/',register,name="register"),
+    path("accounts/logout/",signout,name="logout"),
     path("add-to-cart/<slug>/",addToCart, name="addCart"),
     path("remove-from-cart/<slug>/",removeFromCart, name="removeCart"),
     path("cart/",myCart,name="cart"),
@@ -23,7 +23,7 @@ urlpatterns = [
     path("remove-coupon/",removeCoupon,name="removeCoupon"),
     path("checkout/",checkout,name="checkout"),
     path("checkout-with-save/",checkoutWithSaveAddress,name="checkoutWithSaveAddress"),
-    path('payment/', payment),
+    path('payment/', payment,name="paynow"),
     path('response/', response),
 ] 
 
